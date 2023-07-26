@@ -25,17 +25,17 @@ typedef ComponentInfo = {
 **/
 class ReactMacro
 {
-	macro function jsx(expr:haxe.macro.Expr):haxe.macro.Expr {
-		return switch expr.expr {
-			case EConst(CIdent(s)):
-				macro $v{s};
-			case EBinop(OpArrow, arrow, body):
-				var arrowExpr = arrow.expr;
-				var bodyExpr = body.expr;
-				jsx({expr: EFunction(null, {args: [arrowExpr], expr: bodyExpr, params: null}), pos: expr.pos});
-			case _:
-				Context.fatalError("Unsupported expression", expr.pos);
-		}
+	public static macro function jsx(expr:ExprOf<String>):Expr {
+		if (Context.defined('display'))
+			return switch(expr) {
+				case macro @:markup $v{(s:String)}: macro @:pos(expr.pos) untyped $v{s};
+				case _: macro @:pos(expr.pos) untyped $e{expr};
+			};
+		else
+			return parseJsx(switch(expr) {
+				case macro @:markup $v{(s:String)}: s;
+				case _: ExprTools.getValue(expr);
+			}, expr.pos);
 	}
 
 	public static macro function sanitize(expr:ExprOf<String>):Expr

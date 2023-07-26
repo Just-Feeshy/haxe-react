@@ -25,7 +25,7 @@ typedef ComponentInfo = {
 **/
 class ReactMacro
 {
-	macro function jsx(expr:Expr):Expr {
+	macro function jsx(expr:haxe.macro.Expr):haxe.macro.Expr {
 		return switch expr.expr {
 			case EConst(CIdent(s)):
 				macro $v{s};
@@ -33,13 +33,6 @@ class ReactMacro
 				var arrowExpr = arrow.expr;
 				var bodyExpr = body.expr;
 				jsx({expr: EFunction(null, {args: [arrowExpr], expr: bodyExpr, params: null}), pos: expr.pos});
-			case ECall(func, params):
-				switch func.expr {
-					case EConst(CIdent(tag)):
-						macro js.Lib.global.document.createElement($v{tag});
-					case _:
-						Context.fatalError("Unsupported function call in JSX", func.pos);
-				}
 			case _:
 				Context.fatalError("Unsupported expression", expr.pos);
 		}

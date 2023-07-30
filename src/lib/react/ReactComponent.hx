@@ -1,5 +1,7 @@
 package react;
 
+import js.html.Element;
+
 #if haxe4
 import js.lib.Error;
 #else
@@ -142,9 +144,13 @@ extern class ReactComponentOf<TProps, TState>
 	#end
 }
 
-typedef ReactElement = {
-	type:Dynamic,
-	props:Dynamic,
-	?key:Dynamic,
-	?ref:Dynamic
+class ReactElement extends Element {
+    public var type:Dynamic;
+    public var props:Dynamic;
+    @:optional public var key:Dynamic;
+    @:optional public var ref:Dynamic;
+
+    public function new() {
+        super();
+    }
 }
